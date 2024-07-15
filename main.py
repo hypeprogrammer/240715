@@ -9,14 +9,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+import io
+
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+
 
 # MongoDB 설정
 client = MongoClient('mongodb+srv://flaskuser:1111@flaskdb.le3ff4y.mongodb.net/?retryWrites=true&w=majority&appName=flaskDB')
@@ -35,16 +35,15 @@ def upload_get():
 
 # CSV 파일 DB 저장
 @app.route('/upload', methods=['POST'])
-def upload_post():
+def upload():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     if file:
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-        data = pd.read_csv(file_path)
+        file_stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
+        data = pd.read_csv(file_stream)
         records = data.to_dict(orient='records')
         collection.insert_many(records)
         return jsonify({'message': 'File uploaded and data saved to MongoDB'}), 201
