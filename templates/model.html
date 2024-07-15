@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Input</title>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand fw-bold" href="/">&nbsp;&nbsp;AI</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/data">Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/analysis">Analysis</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/model">Design Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/retro">Retro Design</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Predict Power Output</h1>
+        <form action="/model" method="post">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="coil" name="coil" required>
+                <label class="mdl-textfield__label" for="coil">Coil</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet" name="magnet" required>
+                <label class="mdl-textfield__label" for="magnet">Magnet</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="wind" name="wind" required>
+                <label class="mdl-textfield__label" for="wind">Wind</label>
+            </div>
+            <br>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Predict</button>
+        </form>
+    </div>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</body>
+</html>
