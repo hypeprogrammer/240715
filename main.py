@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, send_file, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from io import BytesIO
@@ -9,14 +9,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-import io
-
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import r2_score
+from flask_caching import Cache
 
 app = Flask(__name__)
 
+# Flask-Caching 설정
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache.init_app(app)
 
 # MongoDB 설정
 client = MongoClient('mongodb+srv://flaskuser:1111@flaskdb.le3ff4y.mongodb.net/?retryWrites=true&w=majority&appName=flaskDB')
@@ -90,18 +92,22 @@ def delete_all():
 
 # 데이터 시각화
 @app.route('/analysis', methods=['GET'])
+@cache.cached(timeout=300)  # Cache for 5 minutes
 def analysis():
     data = pd.DataFrame(list(collection.find()))
     if not {'coil', 'magnet', 'wind', 'power'}.issubset(data.columns):
         return jsonify({'error': 'Required columns not found in data'}), 400
 
-    data = data[['coil', 'magnet', 'wind', 'power']]
+    # 데이터 샘플링 (전체 데이터의 10%만 사용)
+    sample_data = data.sample(frac=0.1, random_state=42)
+
+    sample_data = sample_data[['coil', 'magnet', 'wind', 'power']]
 
     # Calculate Pearson correlation coefficient
-    corr = data.corr(method='pearson')
+    corr = sample_data.corr(method='pearson')
 
     # Create scatter plot matrix
-    sns.pairplot(data)
+    sns.pairplot(sample_data)
     scatter_plot = BytesIO()
     plt.savefig(scatter_plot, format='png')
     scatter_plot.seek(0)
@@ -188,7 +194,6 @@ def retro():
         return redirect(url_for('result_retro', coil=coil, magnet=magnet, wind=wind, accuracy=accuracy_inv))
 
     return render_template('retro.html')
-
 
 # 역설계 결과 출력
 @app.route('/result_retro')
