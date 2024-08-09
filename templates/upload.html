@@ -9,6 +9,10 @@
     <!-- MDL CSS -->
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
     <style>
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -66,12 +70,14 @@
         <button onclick="uploadFile()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Upload</button>
         <button onclick="deleteAllData()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Delete All Data</button>
 
-        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="dataTable">
-            <thead>
-                <tr id="tableHeader"></tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="dataTable">
+                <thead>
+                    <tr id="tableHeader"></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- MDL JavaScript -->

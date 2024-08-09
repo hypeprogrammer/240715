@@ -38,8 +38,10 @@
     </nav>
     <div class="container">
         <h1>Prediction Result</h1>
-        <p><strong>Predicted Power Output:</strong> {{ prediction }}</p>
-        <p><strong>Model Accuracy (R^2 Score):</strong> {{ accuracy }}</p>
+        <p><strong>Predicted Efficiency (%):</strong> {{ efficiency_prediction }}</p>
+        <p><strong>Model Accuracy for Efficiency (R<sup>2</sup> Score):</strong> {{ accuracy_efficiency }}</p>
+        <p><strong>Predicted Power Output (W):</strong> {{ power_prediction }}</p>
+        <p><strong>Model Accuracy for Power (R<sup>2</sup> Score):</strong> {{ accuracy_power }}</p>
         <a href="/model" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Back to Input</a>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>

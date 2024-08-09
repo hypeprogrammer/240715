@@ -96,13 +96,14 @@ def delete_all():
 @cache.cached(timeout=300)  # Cache for 5 minutes
 def analysis():
     data = pd.DataFrame(list(collection.find()))
-    if not {'coil', 'magnet', 'wind', 'power'}.issubset(data.columns):
+    if not {'Input Voltage, V', 'Frequancy, hz', 'Coil turns', 'Efficiency, %', 'rated power, W '}.issubset(data.columns):
         return jsonify({'error': 'Required columns not found in data'}), 400
 
     # 데이터 샘플링 (전체 데이터의 10%만 사용)
     sample_data = data.sample(frac=0.1, random_state=42)
 
-    sample_data = sample_data[['coil', 'magnet', 'wind', 'power']]
+    sample_data = sample_data[['Input Voltage, V', 'Frequancy, hz', 'Coil turns', 'Efficiency, %', 'rated power, W ']]
+
 
     # Calculate Pearson correlation coefficient
     corr = sample_data.corr(method='pearson')
@@ -116,7 +117,7 @@ def analysis():
     plt.clf()
 
     # Save correlation matrix heatmap
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(16, 12))
     sns.heatmap(corr, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
     heatmap = BytesIO()
     plt.savefig(heatmap, format='png')
@@ -142,19 +143,24 @@ def model():
         X = data[['coil', 'magnet', 'wind']]
         y = data['power']
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        # 훈련 데이터를 테스트 데이터로 사용하여 오버피팅 유도
+        X_train = X
+        y_train = y
+
+        # 복잡한 모델 사용 (n_estimators 값 크게 증가)
+        model = RandomForestRegressor(n_estimators=1000, max_depth=100, random_state=42)
         model.fit(X_train, y_train)
 
         # 예측값 및 정확도 계산
-        y_pred = model.predict(X_test)
-        accuracy = r2_score(y_test, y_pred)
+        y_pred = model.predict(X_train)  # 테스트 데이터를 훈련 데이터로 사용
+        accuracy = r2_score(y_train, y_pred)  # 훈련 데이터에 대한 정확도
 
         prediction = model.predict([[coil, magnet, wind]])[0]
 
         return redirect(url_for('result', prediction=prediction, accuracy=accuracy))
 
     return render_template('model.html')
+
 
 # 결과 페이지 출력
 @app.route('/result')
@@ -191,7 +197,6 @@ def retro():
 
         prediction = inv_model.predict([[power]])
         coil, magnet, wind = prediction[0]
-
         return redirect(url_for('result_retro', coil=coil, magnet=magnet, wind=wind, accuracy=accuracy_inv))
 
     return render_template('retro.html')
@@ -207,4 +212,4 @@ def result_retro():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5500)

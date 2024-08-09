@@ -31,21 +31,21 @@
         </div>
     </nav>
     <div class="container">
-        <h1>Predict Power Output</h1>
+        <h1>Predict Power and Efficiency</h1>
         <form action="/model" method="post">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="coil" name="coil" required>
-                <label class="mdl-textfield__label" for="coil">Coil</label>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="voltage" name="voltage" required>
+                <label class="mdl-textfield__label" for="voltage">Input Voltage (V)</label>
             </div>
             <br>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet" name="magnet" required>
-                <label class="mdl-textfield__label" for="magnet">Magnet</label>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="frequency" name="frequency" required>
+                <label class="mdl-textfield__label" for="frequency">Frequency (Hz)</label>
             </div>
             <br>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="wind" name="wind" required>
-                <label class="mdl-textfield__label" for="wind">Wind</label>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="coil_turns" name="coil_turns" required>
+                <label class="mdl-textfield__label" for="coil_turns">Coil Turns</label>
             </div>
             <br>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Predict</button>
