@@ -209,42 +209,62 @@ def result():
 @app.route('/retro', methods=['GET', 'POST'])
 def retro():
     if request.method == 'POST':
-        power = float(request.form['power'])
+        # Extract the target values from the form
+        target_values = [float(request.form['Efficiency']),
+                         float(request.form['Needed current']),
+                         float(request.form['rated power']),
+                         float(request.form['Slot Area']),
+                         float(request.form['Slot Fill Factor']),
+                         float(request.form['Stator Net Weight']),
+                         float(request.form['Rotor Net Weight'])]
 
-        data = pd.DataFrame(list(collection.find()))
-        if not {'coil', 'magnet', 'wind', 'power'}.issubset(data.columns):
-            return jsonify({'error': 'Required columns not found in data'}), 400
+        # Load the data from the MongoDB collection
+        data = pd.DataFrame(list(collection.find({}, {'_id': 0})))
 
-        data = data[['coil', 'magnet', 'wind', 'power']]
-        X = data[['coil', 'magnet', 'wind']]
-        y = data['power']
+        # Ensure that the dataset has the necessary columns
+        if data.empty or len(data.columns) < 32:
+            return jsonify({'error': 'Dataset does not contain the required columns'}), 400
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        model.fit(X_train, y_train)
+        # Define input features (columns 26 to 32) and target variables (columns 1 to 25)
+        X = data.iloc[:, 25:32]  # Columns 26 to 32 (index 25 to 31)
+        y = data.iloc[:, :25]  # Columns 1 to 25 (index 0 to 24)
 
-        # 피처 임포턴스를 기반으로 power를 반대로 예측하는 모델 생성
-        inv_model = RandomForestRegressor(n_estimators=100, random_state=42)
-        inv_model.fit(y_train.values.reshape(-1, 1), X_train)
+        # Train the model with the entire dataset to overfit
+        inv_model = RandomForestRegressor(n_estimators=1000, max_depth=100, random_state=42)
+        inv_model.fit(X, y)
 
-        # 예측값 및 정확도 계산
-        y_pred_inv = inv_model.predict(y_test.values.reshape(-1, 1))
-        accuracy_inv = r2_score(X_test, y_pred_inv)
+        # Calculate the inverse prediction on the training data (overfitting)
+        y_pred_inv = inv_model.predict(X)
+        accuracy_inv = r2_score(y, y_pred_inv)
 
-        prediction = inv_model.predict([[power]])
-        coil, magnet, wind = prediction[0]
-        return redirect(url_for('result_retro', coil=coil, magnet=magnet, wind=wind, accuracy=accuracy_inv))
+        # Use the model to predict the original features based on the provided target values
+        prediction = inv_model.predict([target_values])
+
+        # Extract predictions with actual column names
+        predictions = {col: pred for col, pred in zip(y.columns, prediction[0])}
+
+        # Redirect to the result page with predictions and accuracy
+        return redirect(url_for('result_retro', predictions=predictions, accuracy=accuracy_inv))
 
     return render_template('retro.html')
 
-# 역설계 결과 출력
+
+# Result page for retro
 @app.route('/result_retro')
 def result_retro():
-    coil = request.args.get('coil')
-    magnet = request.args.get('magnet')
-    wind = request.args.get('wind')
+    # Retrieve predictions and accuracy from query parameters
+    predictions = request.args.get('predictions')
     accuracy = request.args.get('accuracy')
-    return render_template('result_retro.html', coil=coil, magnet=magnet, wind=wind, accuracy=accuracy)
+
+    # Convert the string of predictions back to a dictionary
+    predictions = ast.literal_eval(predictions)
+
+    # Assuming the same accuracy for all features (this might be the case if it's a single overall model accuracy)
+    accuracies = {key: float(accuracy) * 100 for key in predictions.keys()}  # Convert to percentage
+
+    # Pass the decoded dictionaries to the template
+    return render_template('result_retro.html', predictions=predictions, accuracies=accuracies)
+
 
 
 if __name__ == '__main__':

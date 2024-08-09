@@ -34,8 +34,38 @@
         <h1>Reverse Predict</h1>
         <form action="/retro" method="post">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="power" name="power" required>
-                <label class="mdl-textfield__label" for="power">Power</label>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="efficiency" name="Efficiency" required>
+                <label class="mdl-textfield__label" for="efficiency">Efficiency (%)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="needed_current" name="Needed current" required>
+                <label class="mdl-textfield__label" for="needed_current">Needed Current (A)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="rated_power" name="rated power" required>
+                <label class="mdl-textfield__label" for="rated_power">Rated Power (W)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="slot_area" name="Slot Area" required>
+                <label class="mdl-textfield__label" for="slot_area">Slot Area (mm²)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="slot_fill_factor" name="Slot Fill Factor" required>
+                <label class="mdl-textfield__label" for="slot_fill_factor">Slot Fill Factor (%)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="stator_net_weight" name="Stator Net Weight" required>
+                <label class="mdl-textfield__label" for="stator_net_weight">Stator Net Weight (kg)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="rotor_net_weight" name="Rotor Net Weight" required>
+                <label class="mdl-textfield__label" for="rotor_net_weight">Rotor Net Weight (kg)</label>
             </div>
             <br>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Predict</button>
