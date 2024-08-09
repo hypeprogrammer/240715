@@ -31,21 +31,131 @@
         </div>
     </nav>
     <div class="container">
-        <h1>Predict Power and Efficiency</h1>
+        <h1>Predict</h1>
         <form action="/model" method="post">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="voltage" name="voltage" required>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="voltage" name="Input Voltage, V" required>
                 <label class="mdl-textfield__label" for="voltage">Input Voltage (V)</label>
             </div>
             <br>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="frequency" name="frequency" required>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="frequency" name="Frequancy, hz" required>
                 <label class="mdl-textfield__label" for="frequency">Frequency (Hz)</label>
             </div>
             <br>
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" step="0.01" id="coil_turns" name="coil_turns" required>
+                <input class="mdl-textfield__input" type="number" step="0.01" id="outer_diameter_stator" name="Outer diameter of stator , mm" required>
+                <label class="mdl-textfield__label" for="outer_diameter_stator">Outer Diameter of Stator (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="inner_diameter_stator" name="inner diameter of stator , mm" required>
+                <label class="mdl-textfield__label" for="inner_diameter_stator">Inner Diameter of Stator (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="stator_core_length" name="Length of Stator Core, mm" required>
+                <label class="mdl-textfield__label" for="stator_core_length">Length of Stator Core (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="stacking_factor_stator" name="Stacking Factor of Stator Core" required>
+                <label class="mdl-textfield__label" for="stacking_factor_stator">Stacking Factor of Stator Core</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="stator_slots" name="Number of Stator Slots" required>
+                <label class="mdl-textfield__label" for="stator_slots">Number of Stator Slots</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="hs0" name="Hs0, mm" required>
+                <label class="mdl-textfield__label" for="hs0">Hs0 (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="hs1" name="Hs1, mm" required>
+                <label class="mdl-textfield__label" for="hs1">Hs1 (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="hs2" name="Hs2, mm" required>
+                <label class="mdl-textfield__label" for="hs2">Hs2 (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="bs1" name="Bs1, mm" required>
+                <label class="mdl-textfield__label" for="bs1">Bs1 (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="bs2" name="Bs2, mm" required>
+                <label class="mdl-textfield__label" for="bs2">Bs2 (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="coil_turns" name="Coil turns" required>
                 <label class="mdl-textfield__label" for="coil_turns">Coil Turns</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="coil_pitch" name="Coil pitch" required>
+                <label class="mdl-textfield__label" for="coil_pitch">Coil Pitch</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="wire_area" name="Wire area, mm^2" required>
+                <label class="mdl-textfield__label" for="wire_area">Wire Area (mm²)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="number_of_poles" name="Number of Poles" required>
+                <label class="mdl-textfield__label" for="number_of_poles">Number of Poles</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="outer_diameter_rotor" name="Outer Diameter of Rotor, mm" required>
+                <label class="mdl-textfield__label" for="outer_diameter_rotor">Outer Diameter of Rotor (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="inner_diameter_rotor" name="Inner Diameter of Rotor, mm" required>
+                <label class="mdl-textfield__label" for="inner_diameter_rotor">Inner Diameter of Rotor (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="rotor_core_length" name="Length of Rotor Core, mm" required>
+                <label class="mdl-textfield__label" for="rotor_core_length">Length of Rotor Core (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="stacking_factor_rotor" name="Stacking Factor of Rotor Core" required>
+                <label class="mdl-textfield__label" for="stacking_factor_rotor">Stacking Factor of Rotor Core</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet_skew_width" name="Magnet Skew Width" required>
+                <label class="mdl-textfield__label" for="magnet_skew_width">Magnet Skew Width</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet_embrace" name="Magnet Embrace" required>
+                <label class="mdl-textfield__label" for="magnet_embrace">Magnet Embrace</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet_radian_length" name="Magnet Radian Length, mm" required>
+                <label class="mdl-textfield__label" for="magnet_radian_length">Magnet Radian Length (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="magnet_axial_thickness" name="Magnet Axial Thickness, mm" required>
+                <label class="mdl-textfield__label" for="magnet_axial_thickness">Magnet Axial Thickness (mm)</label>
+            </div>
+            <br>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="number" step="0.01" id="air_gap" name="Air gap, mm" required>
+                <label class="mdl-textfield__label" for="air_gap">Air Gap (mm)</label>
             </div>
             <br>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">Predict</button>
@@ -54,3 +164,4 @@
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </body>
 </html>
+

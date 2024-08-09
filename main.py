@@ -15,6 +15,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from flask_caching import Cache
 
+import urllib.parse  # for encoding the query parameters
+import ast
+
 app = Flask(__name__)
 
 # Flask-Caching 설정
@@ -130,44 +133,77 @@ def analysis():
 # 예측 기능 추가
 @app.route('/model', methods=['GET', 'POST'])
 def model():
-    if request.method == 'POST':
-        coil = float(request.form['coil'])
-        magnet = float(request.form['magnet'])
-        wind = float(request.form['wind'])
+    # Define the columns A to Y based on your dataset
+    required_columns = {
+        'Input Voltage, V', 'Frequancy, hz', 'Outer diameter of stator , mm',
+        'inner diameter of stator , mm', 'Length of Stator Core, mm',
+        'Stacking Factor of Stator Core', 'Number of Stator Slots', 'Hs0, mm',
+        'Hs1, mm', 'Hs2, mm', 'Bs1, mm', 'Bs2, mm', 'Coil turns', 'Coil pitch',
+        'Wire area, mm^2', 'Number of Poles', 'Outer Diameter of Rotor, mm',
+        'Inner Diameter of Rotor, mm', 'Length of Rotor Core, mm',
+        'Stacking Factor of Rotor Core', 'Magnet Skew Width', 'Magnet Embrace',
+        'Magnet Radian Length, mm', 'Magnet Axial Thickness, mm', 'Air gap, mm'
+    }
 
+    if request.method == 'POST':
+        # Extract input features from the form
+        try:
+            input_data = {key: float(request.form[key]) for key in required_columns}
+        except KeyError as e:
+            return jsonify({'error': f'Missing input for required field: {e.args[0]}'}), 400
+        except ValueError:
+            return jsonify({'error': 'Invalid input type. Please ensure all inputs are numeric.'}), 400
+
+        # Load data from the database
         data = pd.DataFrame(list(collection.find()))
-        if not {'coil', 'magnet', 'wind', 'power'}.issubset(data.columns):
+
+        if data.empty:
+            return jsonify({'error': 'No data found in the database.'}), 400
+
+        if not required_columns.issubset(data.columns):
             return jsonify({'error': 'Required columns not found in data'}), 400
 
-        data = data[['coil', 'magnet', 'wind', 'power']]
-        X = data[['coil', 'magnet', 'wind']]
-        y = data['power']
+        # Use columns A to Y as input features
+        X = data[list(required_columns)]
+        # Use columns Z onwards as target variables
+        y = data.iloc[:, len(required_columns):]
 
-        # 훈련 데이터를 테스트 데이터로 사용하여 오버피팅 유도
-        X_train = X
-        y_train = y
+        # Check if target variables are present
+        if y.empty:
+            return jsonify({'error': 'No target columns found for prediction.'}), 400
 
-        # 복잡한 모델 사용 (n_estimators 값 크게 증가)
-        model = RandomForestRegressor(n_estimators=1000, max_depth=100, random_state=42)
-        model.fit(X_train, y_train)
+        # Train models for each target variable
+        predictions = {}
+        accuracies = {}
 
-        # 예측값 및 정확도 계산
-        y_pred = model.predict(X_train)  # 테스트 데이터를 훈련 데이터로 사용
-        accuracy = r2_score(y_train, y_pred)  # 훈련 데이터에 대한 정확도
+        # Iterate over each target column and predict
+        for column in y.columns:
+            model = RandomForestRegressor(n_estimators=1000, max_depth=100, random_state=42)
+            model.fit(X, y[column])
+            y_pred = model.predict(X)  # Predict using the same training data (overfitting)
+            accuracy = r2_score(y[column], y_pred)
+            predictions[column] = model.predict([list(input_data.values())])[0]
+            accuracies[column] = accuracy
 
-        prediction = model.predict([[coil, magnet, wind]])[0]
-
-        return redirect(url_for('result', prediction=prediction, accuracy=accuracy))
+        # Redirect to result page with predictions and accuracies
+        return redirect(url_for('result', predictions=predictions, accuracies=accuracies))
 
     return render_template('model.html')
-
 
 # 결과 페이지 출력
 @app.route('/result')
 def result():
-    prediction = request.args.get('prediction')
-    accuracy = request.args.get('accuracy')
-    return render_template('result.html', prediction=prediction, accuracy=accuracy)
+    # Decode the query parameters back into dictionaries
+    predictions = ast.literal_eval(urllib.parse.unquote(request.args.get('predictions')))
+    accuracies = ast.literal_eval(urllib.parse.unquote(request.args.get('accuracies')))
+
+    # Convert accuracy values to percentage
+    accuracies_percentage = {key: value * 100 for key, value in accuracies.items()}
+
+    # Pass the decoded dictionaries to the template
+    return render_template('result.html', predictions=predictions, accuracies=accuracies_percentage)
+
+
 
 # 역설계 기능
 @app.route('/retro', methods=['GET', 'POST'])

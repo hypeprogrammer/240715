@@ -11,6 +11,9 @@
             text-align: center;
             margin-top: 50px;
         }
+        table {
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -37,12 +40,26 @@
         </div>
     </nav>
     <div class="container">
-        <h1>Prediction Result</h1>
-        <p><strong>Predicted Efficiency (%):</strong> {{ efficiency_prediction }}</p>
-        <p><strong>Model Accuracy for Efficiency (R<sup>2</sup> Score):</strong> {{ accuracy_efficiency }}</p>
-        <p><strong>Predicted Power Output (W):</strong> {{ power_prediction }}</p>
-        <p><strong>Model Accuracy for Power (R<sup>2</sup> Score):</strong> {{ accuracy_power }}</p>
-        <a href="/model" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Back to Input</a>
+        <h1>Prediction Results</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Predicted Value</th>
+                    <th>Model Accuracy (R<sup>2</sup>)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in predictions.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                    <td>{{ accuracies[key] }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/model" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mt-4">Back to Input</a>
     </div>
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </body>
