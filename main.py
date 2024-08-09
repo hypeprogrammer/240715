@@ -200,9 +200,14 @@ def result():
     # Convert accuracy values to percentage
     accuracies_percentage = {key: value * 100 for key, value in accuracies.items()}
 
-    # Pass the decoded dictionaries to the template
-    return render_template('result.html', predictions=predictions, accuracies=accuracies_percentage)
+    # Remove 'Air gap, mm' from predictions and accuracies if it exists
+    if 'Air gap, mm' in predictions:
+        del predictions['Air gap, mm']
+    if 'Air gap, mm' in accuracies_percentage:
+        del accuracies_percentage['Air gap, mm']
 
+    # Pass the filtered dictionaries to the template
+    return render_template('result.html', predictions=predictions, accuracies=accuracies_percentage)
 
 
 # 역설계 기능
